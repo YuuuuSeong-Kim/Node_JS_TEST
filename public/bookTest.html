@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(function () {
+            function loadBook() {
+                $.ajax({
+                    url: "/listBook",
+                    success: function (list) {
+                        $("#bookid").val(list.bookid)
+                        var tbody = $("#listBook");
+                        $.each(list.data, function () {
+                            var tr = $("<tr></tr>").attr("class","col");
+                            tr.append($("<td></td>").html(this.bookid).attr("class","bookid"));
+                            tr.append($("<td></td>").html(this.bookname).attr("class","bookname"));
+                            tr.append($("<td></td>").html(this.price).attr("class","price"));
+                            tr.append($("<td></td>").html(this.publisher).attr("class","publisher"));
+                            tbody.append(tr);
+                        })
+                    }
+                })
+            }
+            
+            $("#listBook").on("click",".col",function(){
+                $("#bookid").val($(this).children(".bookid").text())
+                $("#bookname").val($(this).children(".bookname").text())
+                $("#price").val($(this).children(".price").text())
+                $("#publisher").val($(this).children(".publisher").text())
+            })
+
+            $("#btnUpdate").click(function () {
+                var data = $("form").serializeArray();
+                $.post("/update", data, function () {
+                    alert("수정완료");
+                    window.location.reload();
+                })
+            })
+            
+            $("#btnInsert").click(function () {
+                var data = $("form").serializeArray();
+                $.post("/insert", data, function () {
+                    alert("등록완료");
+                    // loadBook();
+                    window.location.reload();
+                })
+            })
+
+            loadBook();
+        })
+    </script>
+</head>
+
+<body>
+    <table border="1">
+        <tr>
+            <th>도서번호</th>
+            <th>도서명</th>
+            <th>가격</th>
+            <th>출판사</th>
+        </tr>
+        <tbody id="listBook">
+
+        </tbody>
+    </table>
+
+    <hr>
+    <form method="post">
+        도서번호 : <input type="number" name="bookid" id="bookid"><br>
+        도서이름 : <input type="text" name="bookname" id="bookname"><br>
+        도서가격 : <input type="text" name="price" id="price"><br>
+        출판사명 : <input type="text" name="publisher" id="publisher"><br><br>
+    </form>
+    <button id="btnInsert">등록</button>
+    <button id="btnUpdate">수정</button>
+</body>
+
+</html>

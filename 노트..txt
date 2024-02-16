@@ -1,0 +1,26 @@
+1) '축구' 관련 도서의 수를 출력하시오.
+    db.book.find({bookname: /축구/}).count()
+
+2) 가격이 20000원 이상인 도서의 도서명, 가격을 출력하시오. 가격이 높은 순
+    db.book.find({price:{$gte:20000}},{bookname:1, price:1, _id:0}).sort({price:-1})
+
+3) 이상미디어의 모든 도서의 가격을 1000원씩 증가시킵니다.
+    db.book.updateMany({},{$inc:{price:1000}})
+
+4) 출판사명 '대한미디어'를 모두 '쌍용미디어'로 수정합니다.
+    db.book.updateMany({publisher:'대한미디어'},{$set:{publisher:'쌍용미디어'}})
+
+5) 도서번호 8번의 가격을 15000원, 도서명을 '재미있는 야구'로 수정합니다
+    db.book.updateMany({bookid:8},{$set: {price:15000, bookname:'재미있는 야구'} })
+
+5-1) 모든 도서의 가격을 -100원 합니다.
+    db.book.updateMany({},{$inc:{price:-100}})
+
+6) 7번 도서를 삭제합니다.
+    db.book.deleteMany({bookid:7})
+
+7) 굿스포츠의 도서중에 가격이 7000원 이하인 모든 도서를 삭제합니다.
+    db.book.deleteMany({publisher:"굿스포츠", price:{$lte:7000}})
+
+8) 모든 도서를 삭제합니다.
+    db.book.deleteMany({})
