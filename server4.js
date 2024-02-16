@@ -38,22 +38,6 @@ app.get("/listBook", function (req, res) {
     run();
 })
 
-app.get("/nextNO", function (req, res) {
-    const client = new MongoClient(uri);
-    async function run() {
-        try {
-            const database = client.db('madang');
-            const book = database.collection('book');
-            const nextNO = await book.find({}).project({ bookid:1,_id:0 }).sort({bookid:-1}).limit(1).toArray();
-            var bookid = nextNO[0].bookid;
-            res.send(bookid);
-        } finally {
-            await client.close();
-        }
-    }
-    run();
-})
-
 app.post("/insert", function (req, res) {
     const client = new MongoClient(uri);
     async function run() {
