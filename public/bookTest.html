@@ -41,6 +41,26 @@
                 })
             })
             
+            $("#btnDelete").click(function(){
+                var bookid = {bookid:$("#bookid").val()};
+                var result = confirm("정말 해당 도서를 삭제하시겠습니까?");
+                if(result){
+                    // $.post("/delete", bookid, function () {
+                    // alert("삭제완료");
+                    // window.location.reload();
+                    // })
+                    $.ajax({
+                        url:"/delete",
+                        data:bookid,
+                        type:'post',
+                        success:function(){
+                            alert("삭제완료");
+                            window.location.reload();
+                        }
+                    })
+                }
+            })
+
             $("#btnInsert").click(function () {
                 var data = $("form").serializeArray();
                 $.post("/insert", data, function () {
@@ -62,7 +82,6 @@
             <th>도서명</th>
             <th>가격</th>
             <th>출판사</th>
-            <th>Action</th>
         </tr>
         <tbody id="listBook">
 
@@ -78,6 +97,7 @@
     </form>
     <button id="btnInsert">등록</button>
     <button id="btnUpdate">수정</button>
+    <button id="btnDelete">삭제</button>
 </body>
 
 </html>

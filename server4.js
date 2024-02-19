@@ -12,84 +12,28 @@ app.use(app.router);
 // 	{"bookid":8,"bookname":"야구를 부탁해","price":13000,"publisher":"이상미디어"},
 // 	{"bookid":9,"bookname":"올림픽 이야기","price":7500,"publisher":"삼성당"}
 // ]
+
 var data;
-const { MongoClient } = require("mongodb");
-const uri = "mongodb://localhost:27017";
+var bookDAO = require("./bookDAO");
 
-
-app.get("/listBook", function (req, res) {
-    const client = new MongoClient(uri);
-    async function run() {
-        try {
-            const database = client.db('madang');
-            const book = database.collection('book');
-            data = await book.find({}).toArray();
-            const nextNO = await book.find({}).project({ bookid:1,_id:0 }).sort({bookid:-1}).limit(1).toArray();
-            var bookid = nextNO[0].bookid+1;
-            var arr = {
-                data,
-                bookid
-            }
-            res.send(arr);
-        } finally {
-            await client.close();
-        }
-    }
-    run();
+app.get("/listBook",async function (req, res) {
+    let arr = await bookDAO.listBook();
+    res.send(arr);
 })
 
-app.post("/insert", function (req, res) {
-    const client = new MongoClient(uri);
-    async function run() {
-        try {
-            const database = client.db('madang');
-            const book = database.collection('book');
-            // var Query = {   bookid:Number(req.param("bookid")),
-            //                 bookname:req.param("bookname"),
-            //                 price:Number(req.param("price")),
-            //                 publisher:req.param("publisher"),
-            //                 };
-            
-            
-            var Query = {   bookid:Number(req.body.bookid),
-                            bookname:req.body.bookname,
-                            price:Number(req.body.price),
-                            publisher:req.body.publisher,
-                            };
-            await book.insertOne(Query);
-        } finally {
-            // Ensures that the client will close when you finish/error
-            await client.close();
-        }
-    }
-    run();
+app.post("/insert",async function (req, res) {
+    await bookDAO.insert(req);
     res.redirect("/bookTest.html");
 })
 
-app.post("/update", function (req, res) {
-    const client = new MongoClient(uri);
-    async function run() {
-        try {
-            const database = client.db('madang');
-            const book = database.collection('book');
-            // var Query = {   bookid:Number(req.param("bookid")),
-            //                 bookname:req.param("bookname"),
-            //                 price:Number(req.param("price")),
-            //                 publisher:req.param("publisher"),
-            //                 };
-            
-            var Query = {   $set:{
-                            bookname:req.body.bookname,
-                            price:Number(req.body.price),
-                            publisher:req.body.publisher}
-                            };
-            await book.updateOne({bookid:Number(req.body.bookid)},Query,{});
-        } finally {
-            // Ensures that the client will close when you finish/error
-            await client.close();
-        }
-    }
-    run();
+app.post("/update",async function (req, res) {
+    await bookDAO.update(req);
+    res.redirect("/bookTest.html");
+})
+
+app.post("/delete",async function (req, res) {
+    var bookid = req.body.bookid;
+    await bookDAO.del(bookid);
     res.redirect("/bookTest.html");
 })
 
